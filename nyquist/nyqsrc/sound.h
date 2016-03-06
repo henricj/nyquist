@@ -12,7 +12,7 @@
 extern long sound_frames;
 extern double sound_srate;
 
-extern long max_sample_blocks;
+extern size_t max_sample_blocks;
 
 #if OSC
 extern int nosc_enabled; /* enable polling for OSC messages */

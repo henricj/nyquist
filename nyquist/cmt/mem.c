@@ -1,7 +1,7 @@
 /* mem.c -- fast memory allocation/deallocation module */
 
 /* Allocate large chunks of memory using malloc.  From the chunks,
-   allocate memory as needed on long-word boundaries.  Memory is
+   allocate memory as needed on intptr_t-word boundaries.  Memory is
    freed by linking memory onto a freelist.  An array of freelists,
    one for each size, is maintained and checked before going to the
    chunck for more memory.  The freelist array only holds lists of
@@ -24,11 +24,11 @@
 /* how many bytes in the largest node managed in mem_free_list array */
 #define MAX_SIZE_FOR_FREELIST 256
 
-long *mem_free_list[MAX_SIZE_FOR_FREELIST/4];
+intptr_t *mem_free_list[MAX_SIZE_FOR_FREELIST/4];
 
 #define MEM_CHUNK_SIZE 4096
 char *mem_chunk;
-long mem_chunk_remaining = 0;
+intptr_t mem_chunk_remaining = 0;
 
 void meminit()
 {
@@ -45,10 +45,10 @@ void *memget(register size_t size)
 /*		gprintf(TRANS, "memget calling MALLOC\n"); */
         return MALLOC(size);
     } else {
-        long **p = mem_free_list + ((size - 1) >> 2);
+        intptr_t **p = mem_free_list + ((size - 1) >> 2);
         if (*p) {
-            register long *result = *p;
-            *p = (long *) *result;
+            register intptr_t *result = *p;
+            *p = (intptr_t *) *result;
 /*			gprintf(TRANS, "memget->%lx\n", result); */
             return (char *) result;
         } else if ((size_t) mem_chunk_remaining >= size) {
@@ -76,13 +76,13 @@ void *memget(register size_t size)
 
 void memfree(register void *ptr, register size_t size)
 {
-    register long **p = (long **) ptr;
+    register intptr_t **p = (intptr_t **) ptr;
     if (size > MAX_SIZE_FOR_FREELIST) {
         FREE(ptr);
     } else {
-        register long **head_ptr = mem_free_list + ((size - 1) >> 2);
+        register intptr_t **head_ptr = mem_free_list + ((size - 1) >> 2);
         *p = *head_ptr;
-        *head_ptr = (long *) p;
+        *head_ptr = (intptr_t *) p;
     }
 }
 

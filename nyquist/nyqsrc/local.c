@@ -40,16 +40,16 @@ void localsymbols(void)
 #endif
 }
 
-extern int sample_block_total;
-extern int sample_block_used;
+extern size_t sample_block_total;
+extern size_t sample_block_used;
 
 void print_local_gc_info(void)
 {
     char buf[50];
     /* print sample blocks */
-    sprintf(buf, "; samples %ldKB, %ldKB free",
-            (sample_block_total * max_sample_block_len * sizeof(sample_type)) / 1024,
-            ((sample_block_total - sample_block_used) *
+    sprintf(buf, "; samples %lluKB, %lluKB free",
+            (unsigned long long)(sample_block_total * max_sample_block_len * sizeof(sample_type)) / 1024,
+            (unsigned long long)((sample_block_total - sample_block_used) *
              max_sample_block_len * sizeof(sample_type)) / 1024);
     stdputstr(buf);
 }

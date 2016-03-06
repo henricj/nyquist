@@ -63,11 +63,11 @@
 extern CQUE *sample_block_free; /* really a sample_block_type */
 
 /* special counts */
-extern int sample_block_total;
-extern int sample_block_used;
+extern size_t sample_block_total;
+extern size_t sample_block_used;
 extern int snd_list_used;
 extern int sound_used;
-extern long table_memory;
+extern size_t table_memory;
 
 /* generic free lists */
 #define MAXLISTS 128
