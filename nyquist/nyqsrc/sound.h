@@ -421,7 +421,7 @@ extern sample_block_type blocks_to_watch[blocks_to_watch_max];
 
 void block_watch(long sample_block);
     /* LISP: (BLOCK-WATCH FIXNUM) */
-long sound_nth_block(sound_type snd, long n);
+FIXTYPE sound_nth_block(sound_type snd, FIXTYPE n);
     /* LISP: (SOUND-NTH-BLOCK SOUND FIXNUM) */
 #endif
 

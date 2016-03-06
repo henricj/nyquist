@@ -25,7 +25,7 @@
 
 /* default maximum sample blocks: 
  * 1GB / (sample_block_len samples/block * 4 bytes/sample) */
-long max_sample_blocks = 1000000000 / (max_sample_block_len * sizeof(float));
+size_t max_sample_blocks = 1000000000 / (max_sample_block_len * sizeof(float));
 
 /* #define GC_DEBUG */
 #ifdef GC_DEBUG
@@ -36,7 +36,7 @@ snd_list_type list_watch; //DBY
 
 /* #define SNAPSHOTS */
 
-long table_memory;
+size_t table_memory;
 
 sample_block_type zero_block;
 sample_block_type internal_zero_block;
@@ -67,9 +67,9 @@ int nosc_enabled = false;
 /* m is in bytes */
 long snd_set_max_audio_mem(long m)
 {
-    long r = max_sample_blocks;
+    size_t r = max_sample_blocks;
     max_sample_blocks = m / (max_sample_block_len * sizeof(float));
-    return r * max_sample_block_len * sizeof(float);
+    return (long)(r * max_sample_block_len * sizeof(float));
 }
 
 
@@ -199,7 +199,7 @@ void fetch_zeros(snd_susp_type susp, snd_list_type snd_list)
  * NOTE: intended to be called from lisp.  Lisp can then call block_watch
  * to keep an eye on the block.
  */
-long sound_nth_block(sound_type snd, long n)
+FIXTYPE sound_nth_block(sound_type snd, FIXTYPE n)
 {
     long i;
     snd_list_type snd_list = snd->list;
@@ -211,7 +211,7 @@ long sound_nth_block(sound_type snd, long n)
         if (!snd_list->block) return 0;
         snd_list = snd_list->u.next;
     }
-    if (snd_list->block) return (long) snd_list->block;
+    if (snd_list->block) return (FIXTYPE) snd_list->block;
     else return 0;
 }
 
@@ -279,7 +279,7 @@ sound_type sound_create(
 {
     sound_type sound;
     falloc_sound(sound, "sound_create");
-    if (((long) sound) & 3) errputstr("sound not word aligned\n");
+    if (((intptr_t) sound) & 3) errputstr("sound not word aligned\n");
     last_sound = sound; /* debug */
     if (t0 < 0) xlfail("attempt to create a sound with negative starting time");
     /* nyquist_printf("sound_create %p gets %g\n", sound, t0); */
@@ -1291,8 +1291,7 @@ void set_logical_stop_time(sound_type sound, time_type when)
 sound_type printing_this_sound = NULL;
 void ((**watch_me)()) = NULL;
 
-void set_watch(where)
-  void ((**where)());
+void set_watch(void((**where)()))
 {
     if (watch_me == NULL) {
         watch_me = where;
@@ -1304,9 +1303,7 @@ void set_watch(where)
 /*
  * additional routines
  */
-void sound_print(snd_expr, n)
-  LVAL snd_expr;
-  long n;
+void sound_print(LVAL snd_expr, long n)
 {
     LVAL result;
 
@@ -1438,8 +1435,7 @@ void sound_print_array(LVAL sa, long n)
  * sounds.
  */
 
-void sound_play(snd_expr)
-  LVAL snd_expr;
+void sound_play(LVAL snd_expr)
 {
     int ntotal;
     long blocklen;
@@ -1501,9 +1497,7 @@ void indent(int n)
 }
 
 
-void sound_print_tree_1(snd, n)
-  sound_type snd;
-  int n;
+void sound_print_tree_1(sound_type snd, int n)
 {
     int i;
     snd_list_type snd_list;

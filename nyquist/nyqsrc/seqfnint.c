@@ -42,11 +42,11 @@ LVAL xlc_seq_reset(void)
 LVAL xlc_seq_insert_ctrl(void)
 {
     seq_type arg1 = getseq(xlgaseq());
-    long arg2 = getfixnum(xlgafixnum());
-    long arg3 = getfixnum(xlgafixnum());
-    long arg4 = getfixnum(xlgafixnum());
-    long arg5 = getfixnum(xlgafixnum());
-    long arg6 = getfixnum(xlgafixnum());
+    FIXTYPE arg2 = getfixnum(xlgafixnum());
+    FIXTYPE arg3 = getfixnum(xlgafixnum());
+    FIXTYPE arg4 = getfixnum(xlgafixnum());
+    FIXTYPE arg5 = getfixnum(xlgafixnum());
+    FIXTYPE arg6 = getfixnum(xlgafixnum());
 
     xllastarg();
     insert_ctrl(arg1, arg2, arg3, arg4, arg5, arg6);

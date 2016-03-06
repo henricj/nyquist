@@ -54,7 +54,7 @@ void read__fetch(snd_susp_type a_susp, snd_list_type snd_list)
        float. The assumption was no sample would be longer than 4 bytes and
        after conversion, samples would be 4 byte floats. 
     */
-    long in_count; /* jlh Trying to make move_samples_... work */
+    sf_count_t in_count; /* jlh Trying to make move_samples_... work */
 
     falloc_sample_block(out, "read__fetch");
     out_ptr = out->samples;
@@ -62,7 +62,7 @@ void read__fetch(snd_susp_type a_susp, snd_list_type snd_list)
 
     in_count = sf_readf_float(susp->sndfile, out_ptr, max_sample_block_len);
 
-    n = in_count;
+    n = (long)in_count;
 
     /* don't read too many */
     if (n > (susp->cnt - susp->susp.current)) {

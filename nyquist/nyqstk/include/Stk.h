@@ -15,6 +15,10 @@
 #ifndef STK_STK_H
 #define STK_STK_H
 #ifdef WIN32
+
+#if defined _MSC_VER && _MSC_VER > 1400
+#include <cstddef>
+#else
 // this is a fix for Visual Studio 14; not sure if it will cause problems elsewhere
 typedef signed __int8     int8_t;
 typedef signed __int16    int16_t;
@@ -42,6 +46,7 @@ typedef uint32_t uint_fast32_t;
 typedef uint64_t uint_fast64_t;
 typedef int64_t  intmax_t;
 typedef uint64_t uintmax_t;
+#endif
 #endif
 
 #include <string>
@@ -303,7 +308,7 @@ public:
   unsigned int channels( void ) const { return nChannels_; };
 
   //! Return the number of sample frames represented by the data.
-  unsigned int frames( void ) const { return nFrames_; };
+  unsigned int frames( void ) const { return static_cast<unsigned int>(nFrames_); };
 
   //! Set the sample rate associated with the StkFrames data.
   /*!

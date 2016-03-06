@@ -145,7 +145,7 @@ void convolve_s_fetch(snd_susp_type a_susp, snd_list_type snd_list)
         /* don't overflow the output sample block: */
         togo = max_sample_block_len - cnt;
         /* if we need output samples, generate them here */
-        D printf("test R_current at offset %ld\n", susp->R_current - R);
+        D printf("test R_current at offset %lld\n", (long long)(susp->R_current - R));
         if (susp->R_current >= R + N) { // true when we output half of R
             int i = 0;
             int j, k;
@@ -157,7 +157,7 @@ void convolve_s_fetch(snd_susp_type a_susp, snd_list_type snd_list)
             memcpy(R, R + N, N * sizeof(*R));
             memset(R + N, 0, N * sizeof(*R));
             /* Copy N samples of x_snd into Xj and zero fill to size 2N */
-            D printf("Copying N samples of x_snd into Xj at offset %ld\n", Xj - susp->X);
+            D printf("Copying N samples of x_snd into Xj at offset %lld\n", (long long)(Xj - susp->X));
             while (i < N) {
                 if (susp->x_snd_cnt == 0) {
                     susp_get_samples(x_snd, x_snd_ptr, x_snd_cnt);

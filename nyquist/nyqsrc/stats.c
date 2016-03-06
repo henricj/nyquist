@@ -20,7 +20,7 @@ void stats()
     nyquist_printf("\tdata structure usage:\n");
     nyquist_printf("\t\tsounds\t%d\n", sound_used);
     nyquist_printf("\t\tsnd lists\t%d\n", snd_list_used);
-    nyquist_printf("\t\tsample blocks\t%d\n", sample_block_used);
-    nyquist_printf("\t\ttable space in bytes\t%ld\n", table_memory);
+    nyquist_printf("\t\tsample blocks\t%llu\n", (unsigned long long)sample_block_used);
+    nyquist_printf("\t\ttable space in bytes\t%llu\n", (unsigned long long)table_memory);
     nyquist_printf("\n");
 }
