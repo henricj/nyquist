@@ -657,6 +657,7 @@ set(nyquist_SRCS
   nyqsrc/sndfnint.c
   nyqsrc/sndwritepa.c 
   nyqsrc/f0.cpp
+  nyqsrc/RngSupport.cpp
   ffts/src/fftlib.c
   ffts/src/fftext.c
   ffts/src/matlib.c
