@@ -141,7 +141,7 @@ LVAL cvsymbol(const char *pname)
      * The bug is fixed by copying pname to the stack.
      */
     LVAL val;
-    int len = strlen(pname) + 1; /* don't forget the terminating zero */
+    size_t len = strlen(pname) + 1; /* don't forget the terminating zero */
     char *local_pname_copy = (char *) alloca(len);
     memcpy(local_pname_copy, pname, len);
     xlsave1(val);
@@ -613,7 +613,7 @@ LVAL xexpand(void)
     /* get the new number to allocate */
     if (moreargs()) {
         num = xlgafixnum();
-        n = getfixnum(num);
+        n = (int)getfixnum(num);
     }
     else
         n = 1;
@@ -636,7 +636,7 @@ LVAL xalloc(void)
 
     /* get the new number to allocate */
     num = xlgafixnum();
-    n = getfixnum(num);
+    n = (int)getfixnum(num);
 
     /* make sure there aren't any more arguments */
     xllastarg();

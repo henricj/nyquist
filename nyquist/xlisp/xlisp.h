@@ -36,8 +36,17 @@ HISTORY
 /* for the Win32 environment */
 #ifdef WIN32
 #define NNODES		2000
-#define AFMT		"%lx"
-#define OFFTYPE		long
+#define AFMT		"%p"
+#define OFFTYPE		ptrdiff_t
+#define FIXTYPE		intptr_t
+#ifdef _WIN64
+#define ICNV(n)		atoll(n)
+#define IFMT		"%lld"
+#else
+#define ICNV(n)		atol(n)
+#define IFMT		"%ld"
+#endif
+
 /* #define SAVERESTORE */
 #define XL_LITTLE_ENDIAN 
 #define _longjmp longjmp

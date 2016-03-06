@@ -318,7 +318,7 @@ LVAL xgensym(void)
                 gsprefix[STRMAX] = '\0';
                 break;
         case FIXNUM:
-                gsnumber = getfixnum(x);
+                gsnumber = (int)getfixnum(x);
                 break;
         default:
                 xlerror("bad argument type",x);
