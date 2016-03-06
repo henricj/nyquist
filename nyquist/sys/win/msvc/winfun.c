@@ -13,7 +13,7 @@
 /* Added by Ning Hu		May.2001 
 xsetdir - set current directory of the process */
 LVAL xsetdir() {
-    TCHAR ssCurDir[MAX_PATH], szCurDir[MAX_PATH];
+    char ssCurDir[MAX_PATH], szCurDir[MAX_PATH];
     int verbose = TRUE;
 
     strcpy(ssCurDir, getstring(xlgastring()));
@@ -22,9 +22,9 @@ LVAL xsetdir() {
     }
     xllastarg();
     if (ok_to_open(ssCurDir, "r")) {
-        if (SetCurrentDirectory(ssCurDir)) {
-            if (GetCurrentDirectory(
-                sizeof(szCurDir)/sizeof(TCHAR), szCurDir)) {
+        if (SetCurrentDirectoryA(ssCurDir)) {
+            if (GetCurrentDirectoryA(
+                sizeof(szCurDir)/sizeof(char), szCurDir)) {
                 return cvstring(szCurDir);
             /* create the result string
                 stdputstr("Current Directory: ");
@@ -59,7 +59,7 @@ LVAL xget_temp_path()
 {
     char *p;
     char szDir[MAX_PATH];
-    int rslt = GetTempPath(MAX_PATH, szDir);
+    int rslt = GetTempPathA(MAX_PATH, szDir);
     if (!(rslt > MAX_PATH || rslt <= 0)) {
 		/* Vista apparently treats c:\windows with
          * special semantics, so just don't allow
@@ -107,7 +107,7 @@ void ossymbols()
     DWORD n;
 #endif
     mywin = GetForegroundWindow();
-    SetConsoleTitle("Nyquist");
+    SetConsoleTitleW(L"Nyquist");
 
 #ifdef WIN32_SNAZZY_CONSOLE     // -eub
     myhandle = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -136,7 +136,7 @@ LVAL xsetupconsole()
     WORD textattrib;
     DWORD n;
     mywin = GetForegroundWindow();
-    SetConsoleTitle("Nyquist");
+    SetConsoleTitleW(L"Nyquist");
 
     myhandle = GetStdHandle(STD_OUTPUT_HANDLE);
     origin.X = 0;
@@ -170,19 +170,19 @@ void get_xlisp_path(char *p, long p_max)
     }
     if (*p) return; /* we got search path, so don't look in registry */
 
-    if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, "SOFTWARE", 0, KEY_READ, &hkey) !=
+    if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, L"SOFTWARE", 0, KEY_READ, &hkey) !=
         ERROR_SUCCESS) {
         return;
     }
-    if (RegOpenKeyEx(hkey, "CMU", 0, KEY_READ, &hkey) !=
+    if (RegOpenKeyExW(hkey, L"CMU", 0, KEY_READ, &hkey) !=
         ERROR_SUCCESS) {
         return;
     }
-    if (RegOpenKeyEx(hkey, "Nyquist", 0, KEY_READ, &hkey) !=
+    if (RegOpenKeyExW(hkey, L"Nyquist", 0, KEY_READ, &hkey) !=
         ERROR_SUCCESS) {
         return;
     }
-    if (RegQueryValueEx(hkey, "XLISPPATH", NULL, &dwType, p, &p_max) !=
+    if (RegQueryValueExW(hkey, L"XLISPPATH", NULL, &dwType, p, &p_max) !=
            ERROR_SUCCESS) {
         *p = 0;	
         return;
