@@ -2554,7 +2554,7 @@ FLAC__bool write_bitbuffer_(FLAC__StreamEncoder *encoder, unsigned samples, FLAC
 
 	if(encoder->protected_->verify) {
 		encoder->private_->verify.output.data = buffer;
-		encoder->private_->verify.output.bytes = bytes;
+		encoder->private_->verify.output.bytes = (unsigned)bytes;
 		if(encoder->private_->verify.state_hint == ENCODER_IN_MAGIC) {
 			encoder->private_->verify.needs_magic_hack = true;
 		}
@@ -2580,8 +2580,8 @@ FLAC__bool write_bitbuffer_(FLAC__StreamEncoder *encoder, unsigned samples, FLAC
 	FLAC__bitwriter_clear(encoder->private_->frame);
 
 	if(samples > 0) {
-		encoder->private_->streaminfo.data.stream_info.min_framesize = flac_min(bytes, encoder->private_->streaminfo.data.stream_info.min_framesize);
-		encoder->private_->streaminfo.data.stream_info.max_framesize = flac_max(bytes, encoder->private_->streaminfo.data.stream_info.max_framesize);
+		encoder->private_->streaminfo.data.stream_info.min_framesize = (unsigned)flac_min(bytes, encoder->private_->streaminfo.data.stream_info.min_framesize);
+		encoder->private_->streaminfo.data.stream_info.max_framesize = (unsigned)flac_max(bytes, encoder->private_->streaminfo.data.stream_info.max_framesize);
 	}
 
 	return true;
@@ -4358,7 +4358,7 @@ FLAC__StreamDecoderReadStatus verify_read_callback_(const FLAC__StreamDecoder *d
 			*bytes = encoded_bytes;
 		memcpy(buffer, encoder->private_->verify.output.data, *bytes);
 		encoder->private_->verify.output.data += *bytes;
-		encoder->private_->verify.output.bytes -= *bytes;
+		encoder->private_->verify.output.bytes -= (unsigned)*bytes;
 	}
 
 	return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;

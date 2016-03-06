@@ -179,14 +179,14 @@ FLAC__bool FLAC__add_metadata_block(const FLAC__StreamMetadata *metadata, FLAC__
 				if(!FLAC__bitwriter_write_raw_uint32(bw, metadata->data.picture.type, FLAC__STREAM_METADATA_PICTURE_TYPE_LEN))
 					return false;
 				len = strlen(metadata->data.picture.mime_type);
-				if(!FLAC__bitwriter_write_raw_uint32(bw, len, FLAC__STREAM_METADATA_PICTURE_MIME_TYPE_LENGTH_LEN))
+				if(!FLAC__bitwriter_write_raw_uint32(bw, (FLAC__uint32)len, FLAC__STREAM_METADATA_PICTURE_MIME_TYPE_LENGTH_LEN))
 					return false;
-				if(!FLAC__bitwriter_write_byte_block(bw, (const FLAC__byte*)metadata->data.picture.mime_type, len))
+				if(!FLAC__bitwriter_write_byte_block(bw, (const FLAC__byte*)metadata->data.picture.mime_type, (unsigned)len))
 					return false;
 				len = strlen((const char *)metadata->data.picture.description);
-				if(!FLAC__bitwriter_write_raw_uint32(bw, len, FLAC__STREAM_METADATA_PICTURE_DESCRIPTION_LENGTH_LEN))
+				if(!FLAC__bitwriter_write_raw_uint32(bw, (FLAC__uint32)len, FLAC__STREAM_METADATA_PICTURE_DESCRIPTION_LENGTH_LEN))
 					return false;
-				if(!FLAC__bitwriter_write_byte_block(bw, metadata->data.picture.description, len))
+				if(!FLAC__bitwriter_write_byte_block(bw, metadata->data.picture.description, (unsigned)len))
 					return false;
 				if(!FLAC__bitwriter_write_raw_uint32(bw, metadata->data.picture.width, FLAC__STREAM_METADATA_PICTURE_WIDTH_LEN))
 					return false;

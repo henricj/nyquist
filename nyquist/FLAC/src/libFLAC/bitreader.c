@@ -120,7 +120,7 @@ static inline void crc16_update_word_(FLAC__BitReader *br, uint32_t word)
 
 static FLAC__bool bitreader_read_from_client_(FLAC__BitReader *br)
 {
-	unsigned start, end;
+	size_t start, end;
 	size_t bytes;
 	FLAC__byte *target;
 
@@ -130,7 +130,7 @@ static FLAC__bool bitreader_read_from_client_(FLAC__BitReader *br)
 		end = br->words + (br->bytes? 1:0);
 		memmove(br->buffer, br->buffer+start, FLAC__BYTES_PER_WORD * (end - start));
 
-		br->words -= start;
+		br->words -= (unsigned int)start;
 		br->consumed_words = 0;
 	}
 
@@ -187,8 +187,8 @@ static FLAC__bool bitreader_read_from_client_(FLAC__BitReader *br)
 	 * finally we'll update the reader values:
 	 */
 	end = br->words*FLAC__BYTES_PER_WORD + br->bytes + bytes;
-	br->words = end / FLAC__BYTES_PER_WORD;
-	br->bytes = end % FLAC__BYTES_PER_WORD;
+	br->words = (unsigned int)(end / FLAC__BYTES_PER_WORD);
+	br->bytes = (unsigned int)(end % FLAC__BYTES_PER_WORD);
 
 	return true;
 }

@@ -576,7 +576,8 @@ FLAC_API off_t FLAC__metadata_simple_iterator_get_block_offset(const FLAC__Metad
 	FLAC__ASSERT(0 != iterator);
 	FLAC__ASSERT(0 != iterator->file);
 
-	return iterator->offset[iterator->depth];
+    // Should function actually return FLAC__off_t?  On x64 Windows, "off_t" is 32 bits (long), but FLAC__off_t is 64 bits (long long).
+	return (off_t) iterator->offset[iterator->depth];
 }
 
 FLAC_API FLAC__MetadataType FLAC__metadata_simple_iterator_get_block_type(const FLAC__Metadata_SimpleIterator *iterator)
@@ -1109,7 +1110,7 @@ static FLAC__off_t chain_prepare_for_write_(FLAC__Metadata_Chain *chain, FLAC__b
 		/* if the metadata shrank and the last block is padding, we just extend the last padding block */
 		if(current_length < chain->initial_length && chain->tail->data->type == FLAC__METADATA_TYPE_PADDING) {
 			const FLAC__off_t delta = chain->initial_length - current_length;
-			chain->tail->data->length += delta;
+			chain->tail->data->length += (unsigned)delta;
 			current_length += delta;
 			FLAC__ASSERT(current_length == chain->initial_length);
 		}
@@ -1121,7 +1122,7 @@ static FLAC__off_t chain_prepare_for_write_(FLAC__Metadata_Chain *chain, FLAC__b
 				chain->status = FLAC__METADATA_CHAIN_STATUS_MEMORY_ALLOCATION_ERROR;
 				return 0;
 			}
-			padding->length = chain->initial_length - (FLAC__STREAM_METADATA_HEADER_LENGTH + current_length);
+			padding->length = (unsigned)(chain->initial_length - (FLAC__STREAM_METADATA_HEADER_LENGTH + current_length));
 			if(0 == (node = node_new_())) {
 				FLAC__metadata_object_delete(padding);
 				chain->status = FLAC__METADATA_CHAIN_STATUS_MEMORY_ALLOCATION_ERROR;
@@ -1144,7 +1145,7 @@ static FLAC__off_t chain_prepare_for_write_(FLAC__Metadata_Chain *chain, FLAC__b
 				}
 				/* if there is at least 'delta' bytes of padding, trim the padding down */
 				else if((FLAC__off_t)chain->tail->data->length >= delta) {
-					chain->tail->data->length -= delta;
+					chain->tail->data->length -= (unsigned)delta;
 					current_length -= delta;
 					FLAC__ASSERT(current_length == chain->initial_length);
 				}
@@ -2797,7 +2798,7 @@ FLAC__bool write_metadata_block_data_picture_cb_(FLAC__IOHandle handle, FLAC__IO
 
 	len = FLAC__STREAM_METADATA_PICTURE_MIME_TYPE_LENGTH_LEN/8;
 	slen = strlen(block->mime_type);
-	pack_uint32_(slen, buffer, len);
+	pack_uint32_((FLAC__uint32)slen, buffer, len);
 	if(write_cb(buffer, 1, len, handle) != len)
 		return false;
 	if(write_cb(block->mime_type, 1, slen, handle) != slen)
@@ -2805,7 +2806,7 @@ FLAC__bool write_metadata_block_data_picture_cb_(FLAC__IOHandle handle, FLAC__IO
 
 	len = FLAC__STREAM_METADATA_PICTURE_DESCRIPTION_LENGTH_LEN/8;
 	slen = strlen((const char *)block->description);
-	pack_uint32_(slen, buffer, len);
+	pack_uint32_((FLAC__uint32)slen, buffer, len);
 	if(write_cb(buffer, 1, len, handle) != len)
 		return false;
 	if(write_cb(block->description, 1, slen, handle) != slen)
@@ -3240,7 +3241,7 @@ local_snprintf(char *str, size_t size, const char *fmt, ...)
 		return 1024;
 	rc = vsnprintf_s (str, size, _TRUNCATE, fmt, va);
 	if (rc < 0)
-		rc = size - 1;
+		rc = (int)(size - 1);
 #elif defined __MINGW32__
 	rc = __mingw_vsnprintf (str, size, fmt, va);
 #else

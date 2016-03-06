@@ -178,7 +178,7 @@ FLAC__StreamEncoderWriteStatus FLAC__ogg_encoder_aspect_write_callback_wrapper(F
 		}
 		else {
 			packet.packet = (unsigned char *)buffer;
-			packet.bytes = bytes;
+			packet.bytes = (long)bytes;
 		}
 
 		if(is_last_block) {
