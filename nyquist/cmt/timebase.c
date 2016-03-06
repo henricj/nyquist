@@ -120,13 +120,12 @@ void callinsert(base, call)
 * Assumes:
 *       call is not null
 ****************************************************************************/
-void callshow(call)
-    call_type call;
+void callshow(call_type call)
 {
     int i;
-    gprintf(TRANS,"address:  %lx\n", (ulong)call);
+    gprintf(TRANS,"address:  %p\n", call);
     gprintf(TRANS,"time:     %ld\n", call->u.e.time);
-    gprintf(TRANS,"routine:  %lx\n", (ulong)call->u.e.routine);
+    gprintf(TRANS,"routine:  %p\n", call->u.e.routine);
     gprintf(TRANS,"parameters:");
     for (i = 0; i < MAX_CALL_ARGS; i++) {
         gprintf(TRANS, " %p", call->u.e.p.arg[i]);

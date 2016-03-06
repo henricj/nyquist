@@ -8,7 +8,7 @@
 
 #define MAX_CALL_ARGS 8
 typedef struct call_args_struct {
-  void *arg[MAX_CALL_ARGS];
+  intptr_t arg[MAX_CALL_ARGS];
 } call_args_node, *call_args_type;
 
 typedef struct call {
