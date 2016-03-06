@@ -897,9 +897,9 @@ error:
 
 static void GetDefaultLatencies( PaTime *defaultLowLatency, PaTime *defaultHighLatency )
 {
-    OSVERSIONINFO osvi;
+    OSVERSIONINFOW osvi;
     osvi.dwOSVersionInfoSize = sizeof( osvi );
-	GetVersionEx( &osvi );
+	GetVersionExW( &osvi );
 
     /* Check for NT */
     if( (osvi.dwMajorVersion == 4) && (osvi.dwPlatformId == 2) )

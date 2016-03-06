@@ -118,7 +118,7 @@ void PaUtil_SetLastHostErrorInfo( PaHostApiTypeId hostApiType, long errorCode,
 */
 
 /** Allocate size bytes, guaranteed to be aligned to a FIXME byte boundary */
-void *PaUtil_AllocateMemory( long size );
+void *PaUtil_AllocateMemory( size_t size );
 
 
 /** Realease block if non-NULL. block may be NULL */

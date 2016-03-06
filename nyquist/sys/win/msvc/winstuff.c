@@ -82,7 +82,7 @@ static char *linebuf = NULL, *lineptr;
 static int numChars;
 
 /* input thread */
-unsigned long input_thread_handle = -1;
+uintptr_t input_thread_handle = -1;
 #define NEED_INPUT if (input_thread_handle == -1) start_input_thread();
 #define input_buffer_max 1024
 #define input_buffer_mask (input_buffer_max - 1)
@@ -247,8 +247,7 @@ int osbputc(int ch, FILE *fp) { return (putc (ch, fp)); }
 void osoutflush(FILE *fp) { fflush(fp); }
 
 /* osagetc - get a character from an ascii file */
-int osagetc(fp)
-  FILE *fp;
+int osagetc(FILE *fp)
 {
     return (getc(fp));
 }
@@ -367,7 +366,7 @@ int renamebackup(char *filename) { return 0; }
 
 
 
-static WIN32_FIND_DATA FindFileData;
+static WIN32_FIND_DATAA FindFileData;
 static HANDLE hFind = INVALID_HANDLE_VALUE;
 #define OSDIR_LIST_READY 0
 #define OSDIR_LIST_STARTED 1
@@ -389,9 +388,9 @@ int osdir_list_start(const char *path)
     if (osdir_list_status != OSDIR_LIST_READY) {
         osdir_list_finish(); // close previously interrupted listing
     }
-    hFind = FindFirstFile(osdir_path, &FindFileData); // get the "."
+    hFind = FindFirstFileA(osdir_path, &FindFileData); // get the "."
     if (hFind == INVALID_HANDLE_VALUE) return FALSE;
-    if (FindNextFile(hFind, &FindFileData) == 0) return FALSE; // get the ".."
+    if (FindNextFileA(hFind, &FindFileData) == 0) return FALSE; // get the ".."
     osdir_list_status = OSDIR_LIST_STARTED;
     return TRUE;
 }
@@ -399,7 +398,7 @@ int osdir_list_start(const char *path)
 
 const char *osdir_list_next()
 {
-    if (FindNextFile(hFind, &FindFileData) == 0) {
+    if (FindNextFileA(hFind, &FindFileData) == 0) {
         osdir_list_status = OSDIR_LIST_DONE;
         return NULL;
     }
@@ -423,5 +422,3 @@ LVAL xechoenabled()
 	// echo_enabled = flag; -- do nothing in Windows
 	return NULL;
 }
-
-

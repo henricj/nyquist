@@ -47,6 +47,7 @@
 #include "pa_allocation.h"
 #include "pa_util.h"
 
+#include <stddef.h>
 
 /*
     Maintain 3 singly linked lists...
@@ -143,7 +144,7 @@ void PaUtil_DestroyAllocationGroup( PaUtilAllocationGroup* group )
 }
 
 
-void* PaUtil_GroupAllocateMemory( PaUtilAllocationGroup* group, long size )
+void* PaUtil_GroupAllocateMemory( PaUtilAllocationGroup* group, size_t size )
 {
     struct PaUtilAllocationGroupLink *links, *link;
     void *result = 0;

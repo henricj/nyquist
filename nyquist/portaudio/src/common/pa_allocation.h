@@ -82,7 +82,7 @@ void PaUtil_DestroyAllocationGroup( PaUtilAllocationGroup* group );
 
 /** Allocate a block of memory though an allocation group.
 */
-void* PaUtil_GroupAllocateMemory( PaUtilAllocationGroup* group, long size );
+void* PaUtil_GroupAllocateMemory( PaUtilAllocationGroup* group, size_t size );
 
 /** Free a block of memory that was previously allocated though an allocation
  group. Calling this function is a relatively time consuming operation.

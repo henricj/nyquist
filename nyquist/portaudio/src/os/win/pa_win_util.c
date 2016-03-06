@@ -62,7 +62,7 @@ static int numAllocations_ = 0;
 #endif
 
 
-void *PaUtil_AllocateMemory( long size )
+void *PaUtil_AllocateMemory( size_t size )
 {
     void *result = GlobalAlloc( GPTR, size );
 
