@@ -543,6 +543,7 @@ set(tran_SRCS
   tran/tonev.c
   tran/upsample.c
   tran/white.c
+  tran/whiteg.c
   tran/stkpitshift.c 
   tran/stkrev.c 
   tran/stkchorus.c)
