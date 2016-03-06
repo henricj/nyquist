@@ -27,7 +27,7 @@
 #include <inttypes.h>
 #endif
 
-#if (defined (SIZEOF_INT64_T) && (SIZEOF_INT64_T == 8))
+#if (defined (SIZEOF_INT64_T) && (SIZEOF_INT64_T == 8)) || (defined _MSC_VER && _MSC_VER >= 1500)
 /* Good, we have int64_t. */
 #elif (defined (SIZEOF_LONG_LONG) && (SIZEOF_LONG_LONG == 8))
 typedef long long int64_t ;

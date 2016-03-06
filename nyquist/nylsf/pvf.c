@@ -115,7 +115,7 @@ pvf_write_header (SF_PRIVATE *psf, int UNUSED (calc_length))
 	snprintf ((char*) psf->header, sizeof (psf->header), "PVF1\n%d %d %d\n",
 		psf->sf.channels, psf->sf.samplerate, psf->bytewidth * 8) ;
 
-	psf->headindex = strlen ((char*) psf->header) ;
+	psf->headindex = (int) strlen ((char*) psf->header) ;
 
 	/* Header construction complete so write it out. */
 	psf_fwrite (psf->header, psf->headindex, 1, psf) ;

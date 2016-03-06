@@ -330,7 +330,7 @@ au_read_header (SF_PRIVATE *psf)
 		psf_log_printf (psf, "  Data Size   : %d\n", au_fmt.datasize) ;
 		}
 	else
-	{	dword = psf->filelength - au_fmt.dataoffset ;
+	{	dword = (int) (psf->filelength - au_fmt.dataoffset) ;
 		psf_log_printf (psf, "  Data Size   : %d (should be %d)\n", au_fmt.datasize, dword) ;
 		au_fmt.datasize = dword ;
 		} ;

@@ -1107,7 +1107,7 @@ wav_write_header (SF_PRIVATE *psf, int calc_length)
 
 	if (psf->headindex + 16 < psf->dataoffset)
 	{	/* Add PAD data if necessary. */
-		k = psf->dataoffset - (psf->headindex + 16) ;
+		k = (int) (psf->dataoffset - (psf->headindex + 16)) ;
 		psf_binheader_writef (psf, "m4z", PAD_MARKER, k, make_size_t (k)) ;
 		} ;
 
@@ -1306,7 +1306,7 @@ wav_subchunk_parse (SF_PRIVATE *psf, int chunk)
 
 	if (current_pos + length > psf->filelength)
 	{	psf_log_printf (psf, "%M : %d (should be %d)\n", chunk, length, (int) (psf->filelength - current_pos)) ;
-		length = psf->filelength - current_pos ;
+		length = (unsigned int) (psf->filelength - current_pos) ;
 		}
 	else
 		psf_log_printf (psf, "%M : %d\n", chunk, length) ;
@@ -1751,7 +1751,7 @@ exif_fill_and_sink (SF_PRIVATE *psf, char* buf, size_t bufsz, size_t toread)
 	if (bytesread == bufsz && toread > bufsz)
 		bytesread += psf_binheader_readf (psf, "j", toread - bufsz) ;
 
-	return bytesread ;
+	return (int) bytesread ;
 } /* exif_fill_and_sink */
 
 /*

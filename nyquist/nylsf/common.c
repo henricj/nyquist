@@ -109,7 +109,7 @@ psf_log_printf (SF_PRIVATE *psf, const char *format, ...)
 					strptr = va_arg (ap, char *) ;
 					if (strptr == NULL)
 						break ;
-					width_specifier -= strlen (strptr) ;
+					width_specifier -= (int) strlen (strptr) ;
 					if (left_align == SF_FALSE)
 						while (width_specifier -- > 0)
 							log_putchar (psf, ' ') ;
@@ -198,7 +198,7 @@ psf_log_printf (SF_PRIVATE *psf, const char *format, ...)
 							} ;
 
 						while (Tens > 0)
-						{	log_putchar (psf, '0' + D / Tens) ;
+						{	log_putchar (psf, (char) ('0' + D / Tens)) ;
 							D %= Tens ;
 							Tens /= 10 ;
 							} ;
@@ -328,7 +328,7 @@ psf_log_printf (SF_PRIVATE *psf, const char *format, ...)
 void
 psf_asciiheader_printf (SF_PRIVATE *psf, const char *format, ...)
 {	va_list	argptr ;
-	int		maxlen ;
+	size_t	maxlen ;
 	char	*start ;
 
 	maxlen = strlen ((char*) psf->header) ;
@@ -342,7 +342,7 @@ psf_asciiheader_printf (SF_PRIVATE *psf, const char *format, ...)
 	/* Make sure the string is properly terminated. */
 	start [maxlen - 1] = 0 ;
 
-	psf->headindex = strlen ((char*) psf->header) ;
+	psf->headindex = (int) strlen ((char*) psf->header) ;
 
 	return ;
 } /* psf_asciiheader_printf */
@@ -513,28 +513,28 @@ header_put_le_8byte (SF_PRIVATE *psf, sf_count_t x)
 static inline void
 header_put_be_8byte (SF_PRIVATE *psf, sf_count_t x)
 {	if (psf->headindex < SIGNED_SIZEOF (psf->header) - 8)
-	{	psf->header [psf->headindex++] = (x >> 56) ;
-		psf->header [psf->headindex++] = (x >> 48) ;
-		psf->header [psf->headindex++] = (x >> 40) ;
-		psf->header [psf->headindex++] = (x >> 32) ;
-		psf->header [psf->headindex++] = (x >> 24) ;
-		psf->header [psf->headindex++] = (x >> 16) ;
-		psf->header [psf->headindex++] = (x >> 8) ;
-		psf->header [psf->headindex++] = x ;
+	{	psf->header [psf->headindex++] = (unsigned char) (x >> 56) ;
+		psf->header [psf->headindex++] = (unsigned char) (x >> 48) ;
+		psf->header [psf->headindex++] = (unsigned char) (x >> 40) ;
+		psf->header [psf->headindex++] = (unsigned char) (x >> 32) ;
+		psf->header [psf->headindex++] = (unsigned char) (x >> 24) ;
+		psf->header [psf->headindex++] = (unsigned char) (x >> 16) ;
+		psf->header [psf->headindex++] = (unsigned char) (x >> 8) ;
+		psf->header [psf->headindex++] = (unsigned char) x ;
 		} ;
 } /* header_put_be_8byte */
 
 static inline void
 header_put_le_8byte (SF_PRIVATE *psf, sf_count_t x)
 {	if (psf->headindex < SIGNED_SIZEOF (psf->header) - 8)
-	{	psf->header [psf->headindex++] = x ;
-		psf->header [psf->headindex++] = (x >> 8) ;
-		psf->header [psf->headindex++] = (x >> 16) ;
-		psf->header [psf->headindex++] = (x >> 24) ;
-		psf->header [psf->headindex++] = (x >> 32) ;
-		psf->header [psf->headindex++] = (x >> 40) ;
-		psf->header [psf->headindex++] = (x >> 48) ;
-		psf->header [psf->headindex++] = (x >> 56) ;
+	{	psf->header [psf->headindex++] = (unsigned char) x ;
+		psf->header [psf->headindex++] = (unsigned char) (x >> 8) ;
+		psf->header [psf->headindex++] = (unsigned char) (x >> 16) ;
+		psf->header [psf->headindex++] = (unsigned char) (x >> 24) ;
+		psf->header [psf->headindex++] = (unsigned char) (x >> 32) ;
+		psf->header [psf->headindex++] = (unsigned char) (x >> 40) ;
+		psf->header [psf->headindex++] = (unsigned char) (x >> 48) ;
+		psf->header [psf->headindex++] = (unsigned char) (x >> 56) ;
 		} ;
 } /* header_put_le_8byte */
 
@@ -674,13 +674,13 @@ psf_binheader_writef (SF_PRIVATE *psf, const char *format, ...)
 					size = strlen (strptr) + 1 ;
 					size += (size & 1) ;
 					if (psf->rwf_endian == SF_ENDIAN_BIG)
-						header_put_be_int (psf, size) ;
+						header_put_be_int (psf, (int)size) ;
 					else
-						header_put_le_int (psf, size) ;
+						header_put_le_int (psf, (int)size) ;
 					memcpy (&(psf->header [psf->headindex]), strptr, size) ;
-					psf->headindex += size ;
+					psf->headindex += (int)size ;
 					psf->header [psf->headindex - 1] = 0 ;
-					count += 4 + size ;
+					count += (int)(4 + size) ;
 					break ;
 
 			case 'S' :
@@ -691,27 +691,27 @@ psf_binheader_writef (SF_PRIVATE *psf, const char *format, ...)
 					strptr = va_arg (argptr, char *) ;
 					size = strlen (strptr) ;
 					if (psf->rwf_endian == SF_ENDIAN_BIG)
-						header_put_be_int (psf, size) ;
+						header_put_be_int (psf, (int)size) ;
 					else
-						header_put_le_int (psf, size) ;
+						header_put_le_int (psf, (int)size) ;
 					memcpy (&(psf->header [psf->headindex]), strptr, size + 1) ;
 					size += (size & 1) ;
-					psf->headindex += size ;
+					psf->headindex += (int)size ;
 					psf->header [psf->headindex] = 0 ;
-					count += 4 + size ;
+					count += (int)(4 + size) ;
 					break ;
 
 			case 'b' :
 					bindata	= va_arg (argptr, void *) ;
 					size	= va_arg (argptr, size_t) ;
 					memcpy (&(psf->header [psf->headindex]), bindata, size) ;
-					psf->headindex += size ;
-					count += size ;
+					psf->headindex += (int)size ;
+					count += (int)size ;
 					break ;
 
 			case 'z' :
 					size = va_arg (argptr, size_t) ;
-					count += size ;
+					count += (int)size ;
 					while (size)
 					{	psf->header [psf->headindex] = 0 ;
 						psf->headindex ++ ;
@@ -728,8 +728,8 @@ psf_binheader_writef (SF_PRIVATE *psf, const char *format, ...)
 
 			case 'j' :
 					size = va_arg (argptr, size_t) ;
-					psf->headindex += size ;
-					count = size ;
+					psf->headindex += (int)size ;
+					count = (int)size ;
 					break ;
 
 			default :
@@ -814,7 +814,7 @@ header_read (SF_PRIVATE *psf, void *ptr, int bytes)
 		} ;
 
 	if (psf->headindex + bytes > psf->headend)
-	{	count = psf_fread (psf->header + psf->headend, 1, bytes - (psf->headend - psf->headindex), psf) ;
+	{	count = (int)psf_fread (psf->header + psf->headend, 1, bytes - (psf->headend - psf->headindex), psf) ;
 		if (count != bytes - (int) (psf->headend - psf->headindex))
 		{	psf_log_printf (psf, "Error : psf_fread returned short count.\n") ;
 			return 0 ;
@@ -840,8 +840,8 @@ header_seek (SF_PRIVATE *psf, sf_count_t position, int whence)
 				return ;
 				} ;
 			if (position > psf->headend)
-				psf->headend += psf_fread (psf->header + psf->headend, 1, position - psf->headend, psf) ;
-			psf->headindex = position ;
+				psf->headend += (int)psf_fread (psf->header + psf->headend, 1, position - psf->headend, psf) ;
+			psf->headindex = (int)position ;
 			break ;
 
 		case SEEK_CUR :
@@ -854,7 +854,7 @@ header_seek (SF_PRIVATE *psf, sf_count_t position, int whence)
 				} ;
 
 			if (psf->headindex + position <= psf->headend)
-			{	psf->headindex += position ;
+			{	psf->headindex += (int)position ;
 				break ;
 				} ;
 
@@ -865,7 +865,7 @@ header_seek (SF_PRIVATE *psf, sf_count_t position, int whence)
 				break ;
 				} ;
 
-			psf->headend += psf_fread (psf->header + psf->headend, 1, position - (psf->headend - psf->headindex), psf) ;
+			psf->headend += (int)psf_fread (psf->header + psf->headend, 1, position - (psf->headend - psf->headindex), psf) ;
 			psf->headindex = psf->headend ;
 			break ;
 
@@ -889,7 +889,7 @@ header_gets (SF_PRIVATE *psf, char *ptr, int bufsize)
 			psf->headindex ++ ;
 			}
 		else
-		{	psf->headend += psf_fread (psf->header + psf->headend, 1, 1, psf) ;
+		{	psf->headend += (int)psf_fread (psf->header + psf->headend, 1, 1, psf) ;
 			ptr [k] = psf->header [psf->headindex] ;
 			psf->headindex = psf->headend ;
 			} ;
@@ -917,7 +917,7 @@ psf_binheader_readf (SF_PRIVATE *psf, char const *format, ...)
 	int				byte_count = 0, count ;
 
 	if (! format)
-		return psf_ftell (psf) ;
+		return (int)psf_ftell (psf) ;
 
 	va_start (argptr, format) ;
 
@@ -1034,14 +1034,14 @@ psf_binheader_readf (SF_PRIVATE *psf, char const *format, ...)
 
 			case 'b' :
 					charptr = va_arg (argptr, char*) ;
-					count = va_arg (argptr, size_t) ;
+					count = (int) va_arg (argptr, size_t) ;
 					if (count > 0)
 						byte_count += header_read (psf, charptr, count) ;
 					break ;
 
 			case 'G' :
 					charptr = va_arg (argptr, char*) ;
-					count = va_arg (argptr, size_t) ;
+					count = (int) va_arg (argptr, size_t) ;
 					if (count > 0)
 						byte_count += header_gets (psf, charptr, count) ;
 					break ;
@@ -1060,14 +1060,14 @@ psf_binheader_readf (SF_PRIVATE *psf, char const *format, ...)
 
 			case 'p' :
 					/* Get the seek position first. */
-					count = va_arg (argptr, size_t) ;
+					count = (int) va_arg (argptr, size_t) ;
 					header_seek (psf, count, SEEK_SET) ;
 					byte_count = count ;
 					break ;
 
 			case 'j' :
 					/* Get the seek position first. */
-					count = va_arg (argptr, size_t) ;
+					count = (int) va_arg (argptr, size_t) ;
 					header_seek (psf, count, SEEK_CUR) ;
 					byte_count += count ;
 					break ;
@@ -1303,7 +1303,7 @@ psf_rand_int32 (void)
 		gettimeofday (&tv, NULL) ;
 		value = tv.tv_sec + tv.tv_usec ;
 #else
-		value = time (NULL) ;
+		value = (int)time (NULL) ;
 #endif
 		} ;
 

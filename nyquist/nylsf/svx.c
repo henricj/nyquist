@@ -155,8 +155,8 @@ svx_read_header	(SF_PRIVATE *psf)
 					psf_binheader_readf (psf, "E4", &FORMsize) ;
 
 					if (FORMsize != psf->filelength - 2 * sizeof (dword))
-					{	dword = psf->filelength - 2 * sizeof (dword) ;
-						psf_log_printf (psf, "FORM : %d (should be %d)\n", FORMsize, dword) ;
+					{	dword = (int) (psf->filelength - 2 * sizeof (dword)) ;
+						psf_log_printf (psf, "FORM : %d (should be %u)\n", FORMsize, dword) ;
 						FORMsize = dword ;
 						}
 					else
@@ -319,8 +319,8 @@ svx_read_header	(SF_PRIVATE *psf)
 						psf_binheader_readf (psf, "j", dword) ;
 						break ;
 						} ;
-					if ((dword = psf_ftell (psf)) & 0x03)
-					{	psf_log_printf (psf, "  Unknown chunk marker at position %d. Resynching.\n", dword - 4) ;
+					if ((dword = (unsigned int) psf_ftell (psf)) & 0x03)
+					{	psf_log_printf (psf, "  Unknown chunk marker at position %u. Resynching.\n", dword - 4) ;
 
 						psf_binheader_readf (psf, "j", -3) ;
 						break ;

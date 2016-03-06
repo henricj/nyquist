@@ -134,7 +134,7 @@ Need separate gsm_data structs for encode and decode.
 
 	if (psf->file.mode == SFM_READ)
 	{	if (psf->datalength % pgsm610->blocksize == 0)
-			pgsm610->blocks = psf->datalength / pgsm610->blocksize ;
+			pgsm610->blocks = (int) (psf->datalength / pgsm610->blocksize) ;
 		else if (psf->datalength % pgsm610->blocksize == 1 && pgsm610->blocksize == GSM610_BLOCKSIZE)
 		{	/*
 			**	Weird AIFF specific case.
@@ -143,11 +143,11 @@ Need separate gsm_data structs for encode and decode.
 			**	chunk. The SSND chunk then gets padded on write which means that
 			**	when it is read the datalength is too big by 1.
 			*/
-			pgsm610->blocks = psf->datalength / pgsm610->blocksize ;
+			pgsm610->blocks = (int) (psf->datalength / pgsm610->blocksize) ;
 			}
 		else
 		{	psf_log_printf (psf, "*** Warning : data chunk seems to be truncated.\n") ;
-			pgsm610->blocks = psf->datalength / pgsm610->blocksize + 1 ;
+			pgsm610->blocks = (int) (psf->datalength / pgsm610->blocksize + 1) ;
 			} ;
 
 		psf->sf.frames = pgsm610->samplesperblock * pgsm610->blocks ;
@@ -198,7 +198,7 @@ gsm610_wav_decode_block	(SF_PRIVATE *psf, GSM610_PRIVATE *pgsm610)
 		return 1 ;
 		} ;
 
-	if ((k = psf_fread (pgsm610->block, 1, WAV_W64_GSM610_BLOCKSIZE, psf)) != WAV_W64_GSM610_BLOCKSIZE)
+	if ((k = (int) psf_fread (pgsm610->block, 1, WAV_W64_GSM610_BLOCKSIZE, psf)) != WAV_W64_GSM610_BLOCKSIZE)
 		psf_log_printf (psf, "*** Warning : short read (%d != %d).\n", k, WAV_W64_GSM610_BLOCKSIZE) ;
 
 	if (gsm_decode (pgsm610->gsm_data, pgsm610->block, pgsm610->samples) < 0)
@@ -226,7 +226,7 @@ gsm610_decode_block	(SF_PRIVATE *psf, GSM610_PRIVATE *pgsm610)
 		return 1 ;
 		} ;
 
-	if ((k = psf_fread (pgsm610->block, 1, GSM610_BLOCKSIZE, psf)) != GSM610_BLOCKSIZE)
+	if ((k = (int) psf_fread (pgsm610->block, 1, GSM610_BLOCKSIZE, psf)) != GSM610_BLOCKSIZE)
 		psf_log_printf (psf, "*** Warning : short read (%d != %d).\n", k, GSM610_BLOCKSIZE) ;
 
 	if (gsm_decode (pgsm610->gsm_data, pgsm610->block, pgsm610->samples) < 0)
@@ -301,7 +301,7 @@ gsm610_read_i	(SF_PRIVATE *psf, int *ptr, sf_count_t len)
 	sptr = psf->u.sbuf ;
 	bufferlen = ARRAY_LEN (psf->u.sbuf) ;
 	while (len > 0)
-	{	readcount = (len >= bufferlen) ? bufferlen : len ;
+	{	readcount = (len >= bufferlen) ? bufferlen : (int) len ;
 		count = gsm610_read_block (psf, pgsm610, sptr, readcount) ;
 		for (k = 0 ; k < readcount ; k++)
 			ptr [total + k] = sptr [k] << 16 ;
@@ -329,7 +329,7 @@ gsm610_read_f	(SF_PRIVATE *psf, float *ptr, sf_count_t len)
 	sptr = psf->u.sbuf ;
 	bufferlen = ARRAY_LEN (psf->u.sbuf) ;
 	while (len > 0)
-	{	readcount = (len >= bufferlen) ? bufferlen : len ;
+	{	readcount = (len >= bufferlen) ? bufferlen : (int) len ;
 		count = gsm610_read_block (psf, pgsm610, sptr, readcount) ;
 		for (k = 0 ; k < readcount ; k++)
 			ptr [total + k] = normfact * sptr [k] ;
@@ -357,7 +357,7 @@ gsm610_read_d	(SF_PRIVATE *psf, double *ptr, sf_count_t len)
 	sptr = psf->u.sbuf ;
 	bufferlen = ARRAY_LEN (psf->u.sbuf) ;
 	while (len > 0)
-	{	readcount = (len >= bufferlen) ? bufferlen : len ;
+	{	readcount = (len >= bufferlen) ? bufferlen : (int) len ;
 		count = gsm610_read_block (psf, pgsm610, sptr, readcount) ;
 		for (k = 0 ; k < readcount ; k++)
 			ptr [total + k] = normfact * sptr [k] ;
@@ -403,7 +403,7 @@ gsm610_seek	(SF_PRIVATE *psf, int UNUSED (mode), sf_count_t offset)
 		return	PSF_SEEK_ERROR ;
 		} ;
 
-	newblock	= offset / pgsm610->samplesperblock ;
+	newblock	= (int) (offset / pgsm610->samplesperblock) ;
 	newsample	= offset % pgsm610->samplesperblock ;
 
 	if (psf->file.mode == SFM_READ)
@@ -434,7 +434,7 @@ gsm610_encode_block	(SF_PRIVATE *psf, GSM610_PRIVATE *pgsm610)
 	gsm_encode (pgsm610->gsm_data, pgsm610->samples, pgsm610->block) ;
 
 	/* Write the block to disk. */
-	if ((k = psf_fwrite (pgsm610->block, 1, GSM610_BLOCKSIZE, psf)) != GSM610_BLOCKSIZE)
+	if ((k = (int) psf_fwrite (pgsm610->block, 1, GSM610_BLOCKSIZE, psf)) != GSM610_BLOCKSIZE)
 		psf_log_printf (psf, "*** Warning : short write (%d != %d).\n", k, GSM610_BLOCKSIZE) ;
 
 	pgsm610->samplecount = 0 ;
@@ -455,7 +455,7 @@ gsm610_wav_encode_block	(SF_PRIVATE *psf, GSM610_PRIVATE *pgsm610)
 	gsm_encode (pgsm610->gsm_data, pgsm610->samples+WAV_W64_GSM610_SAMPLES/2, pgsm610->block+WAV_W64_GSM610_BLOCKSIZE/2) ;
 
 	/* Write the block to disk. */
-	if ((k = psf_fwrite (pgsm610->block, 1, WAV_W64_GSM610_BLOCKSIZE, psf)) != WAV_W64_GSM610_BLOCKSIZE)
+	if ((k = (int) psf_fwrite (pgsm610->block, 1, WAV_W64_GSM610_BLOCKSIZE, psf)) != WAV_W64_GSM610_BLOCKSIZE)
 		psf_log_printf (psf, "*** Warning : short write (%d != %d).\n", k, WAV_W64_GSM610_BLOCKSIZE) ;
 
 	pgsm610->samplecount = 0 ;
@@ -528,7 +528,7 @@ gsm610_write_i	(SF_PRIVATE *psf, const int *ptr, sf_count_t len)
 	sptr = psf->u.sbuf ;
 	bufferlen = ARRAY_LEN (psf->u.sbuf) ;
 	while (len > 0)
-	{	writecount = (len >= bufferlen) ? bufferlen : len ;
+	{	writecount = (len >= bufferlen) ? bufferlen : (int) len ;
 		for (k = 0 ; k < writecount ; k++)
 			sptr [k] = ptr [total + k] >> 16 ;
 		count = gsm610_write_block (psf, pgsm610, sptr, writecount) ;
@@ -556,9 +556,9 @@ gsm610_write_f	(SF_PRIVATE *psf, const float *ptr, sf_count_t len)
 	sptr = psf->u.sbuf ;
 	bufferlen = ARRAY_LEN (psf->u.sbuf) ;
 	while (len > 0)
-	{	writecount = (len >= bufferlen) ? bufferlen : len ;
+	{	writecount = (len >= bufferlen) ? bufferlen : (int) len ;
 		for (k = 0 ; k < writecount ; k++)
-			sptr [k] = lrintf (normfact * ptr [total + k]) ;
+			sptr [k] = (short) lrintf (normfact * ptr [total + k]) ;
 		count = gsm610_write_block (psf, pgsm610, sptr, writecount) ;
 
 		total += count ;
@@ -584,9 +584,9 @@ gsm610_write_d	(SF_PRIVATE *psf, const double *ptr, sf_count_t len)
 	sptr = psf->u.sbuf ;
 	bufferlen = ARRAY_LEN (psf->u.sbuf) ;
 	while (len > 0)
-	{	writecount = (len >= bufferlen) ? bufferlen : len ;
+	{	writecount = (len >= bufferlen) ? bufferlen : (int) len ;
 		for (k = 0 ; k < writecount ; k++)
-			sptr [k] = lrint (normfact * ptr [total + k]) ;
+			sptr [k] = (short) lrint (normfact * ptr [total + k]) ;
 		count = gsm610_write_block (psf, pgsm610, sptr, writecount) ;
 
 		total += count ;

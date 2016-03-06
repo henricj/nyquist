@@ -420,7 +420,7 @@ aiff_read_header (SF_PRIVATE *psf, COMM_CHUNK *comm_fmt)
 						psf_log_printf (psf, "FORM : %u\n", FORMsize) ;
 						}
 					else if (FORMsize != psf->filelength - 2 * SIGNED_SIZEOF (dword))
-					{	dword = psf->filelength - 2 * sizeof (dword) ;
+					{	dword = (unsigned)(psf->filelength - 2 * sizeof (dword)) ;
 						psf_log_printf (psf, "FORM : %u (should be %u)\n", FORMsize, dword) ;
 						FORMsize = dword ;
 						}
@@ -859,7 +859,7 @@ aiff_read_header (SF_PRIVATE *psf, COMM_CHUNK *comm_fmt)
 						psf_binheader_readf (psf, "j", dword) ;
 						break ;
 						} ;
-					if ((dword = psf_ftell (psf)) & 0x03)
+					if ((dword = (unsigned)psf_ftell (psf)) & 0x03)
 					{	psf_log_printf (psf, "  Unknown chunk marker %X at position %d. Resyncing.\n", marker, dword - 4) ;
 
 						psf_binheader_readf (psf, "j", -3) ;
@@ -957,7 +957,7 @@ aiff_read_comm_chunk (SF_PRIVATE *psf, COMM_CHUNK *comm_fmt)
 
 		bytesread += psf_binheader_readf (psf, "Em1", &(comm_fmt->encoding), &encoding_len) ;
 
-		comm_fmt->size = SF_MIN (sizeof (psf->u.scbuf), make_size_t (comm_fmt->size)) ;
+		comm_fmt->size = (unsigned int)SF_MIN (sizeof (psf->u.scbuf), make_size_t (comm_fmt->size)) ;
 		memset (psf->u.scbuf, 0, comm_fmt->size) ;
 		read_len = comm_fmt->size - SIZEOF_AIFC_COMM + 1 ;
 		bytesread += psf_binheader_readf (psf, "b", psf->u.scbuf, read_len) ;
@@ -1096,19 +1096,19 @@ aiff_rewrite_header (SF_PRIVATE *psf, AIFF_PRIVATE * paiff)
 				break ;
 
 			case COMM_MARKER :
-				psf->headindex = paiff->chunk4.l [k].offset ;
-				comm_frames = psf->sf.frames ;
-				comm_size = paiff->chunk4.l [k].len ;
+				psf->headindex = (int)paiff->chunk4.l [k].offset ;
+				comm_frames = (int)psf->sf.frames ;
+				comm_size = (int)paiff->chunk4.l [k].len ;
 				psf_binheader_writef (psf, "Em42t4", COMM_MARKER, comm_size, psf->sf.channels, comm_frames) ;
 				break ;
 
 			case SSND_MARKER :
-				psf->headindex = paiff->chunk4.l [k].offset ;
+				psf->headindex = (int)paiff->chunk4.l [k].offset ;
 				psf_binheader_writef (psf, "Etm8", SSND_MARKER, psf->datalength + SIZEOF_SSND_CHUNK) ;
 				break ;
 
 			case PEAK_MARKER :
-				psf->headindex = paiff->chunk4.l [k].offset ;
+				psf->headindex = (int)paiff->chunk4.l [k].offset ;
 				psf_binheader_writef (psf, "Em4", PEAK_MARKER, AIFF_PEAK_CHUNK_SIZE (psf->sf.channels)) ;
 				psf_binheader_writef (psf, "E44", 1, time (NULL)) ;
 				for (ch = 0 ; ch < psf->sf.channels ; ch++)
@@ -1169,7 +1169,7 @@ aiff_write_header (SF_PRIVATE *psf, int calc_length)
 
 	/* Standard value here. */
 	bit_width = psf->bytewidth * 8 ;
-	comm_frames = (psf->sf.frames > 0xFFFFFFFF) ? 0xFFFFFFFF : psf->sf.frames ;
+	comm_frames = (psf->sf.frames > 0xFFFFFFFF) ? 0xFFFFFFFF : (unsigned int)psf->sf.frames ;
 
 	switch (SF_CODEC (psf->sf.format) | endian)
 	{	case SF_FORMAT_PCM_S8 | SF_ENDIAN_BIG :
@@ -1321,7 +1321,7 @@ aiff_write_header (SF_PRIVATE *psf, int calc_length)
 
 				/* Override standard value here.*/
 				bit_width = 16 ;
-				comm_frames = psf->sf.frames / AIFC_IMA4_SAMPLES_PER_BLOCK ;
+				comm_frames = (unsigned int)(psf->sf.frames / AIFC_IMA4_SAMPLES_PER_BLOCK) ;
 				break ;
 
 		default : return SFE_BAD_OPEN_FORMAT ;
@@ -1494,7 +1494,7 @@ aiff_write_strings (SF_PRIVATE *psf, int location)
 
 		switch (psf->strings [k].type)
 		{	case SF_STR_SOFTWARE :
-				slen = strlen (psf->strings [k].str) ;
+				slen = (int)strlen (psf->strings [k].str) ;
 				psf_binheader_writef (psf, "Em4mb", APPL_MARKER, slen + 4, m3ga_MARKER, psf->strings [k].str, make_size_t (slen + (slen & 1))) ;
 				break ;
 

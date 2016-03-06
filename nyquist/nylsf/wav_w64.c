@@ -329,7 +329,7 @@ wav_w64_read_fmt_chunk (SF_PRIVATE *psf, int fmtsize)
 						} ;
 
 					/* Remove trailing ", ". */
-					bit = strlen (psf->u.cbuf) ;
+					bit = (unsigned int) strlen (psf->u.cbuf) ;
 					psf->u.cbuf [--bit] = 0 ;
 					psf->u.cbuf [--bit] = 0 ;
 

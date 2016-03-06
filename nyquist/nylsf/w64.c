@@ -325,42 +325,42 @@ w64_read_header	(SF_PRIVATE *psf, int *blockalign, int *framesperblock)
 			case levl_HASH16 :
 					psf_binheader_readf (psf, "e8", &chunk_size) ;
 					psf_log_printf (psf, "levl : %D\n", chunk_size) ;
-					dword = chunk_size ;
+					dword = (int) chunk_size ;
 					psf_binheader_readf (psf, "j", dword - 24) ;
 					break ;
 
 			case list_HASH16 :
 					psf_binheader_readf (psf, "e8", &chunk_size) ;
 					psf_log_printf (psf, "list : %D\n", chunk_size) ;
-					dword = chunk_size ;
+					dword = (int) chunk_size ;
 					psf_binheader_readf (psf, "j", dword - 24) ;
 					break ;
 
 			case junk_HASH16 :
 					psf_binheader_readf (psf, "e8", &chunk_size) ;
 					psf_log_printf (psf, "junk : %D\n", chunk_size) ;
-					dword = chunk_size ;
+					dword = (int) chunk_size ;
 					psf_binheader_readf (psf, "j", dword - 24) ;
 					break ;
 
 			case bext_MARKER :
 					psf_binheader_readf (psf, "e8", &chunk_size) ;
 					psf_log_printf (psf, "bext : %D\n", chunk_size) ;
-					dword = chunk_size ;
+					dword = (int) chunk_size ;
 					psf_binheader_readf (psf, "j", dword - 24) ;
 					break ;
 
 			case MARKER_HASH16 :
 					psf_binheader_readf (psf, "e8", &chunk_size) ;
 					psf_log_printf (psf, "marker : %D\n", chunk_size) ;
-					dword = chunk_size ;
+					dword = (int) chunk_size ;
 					psf_binheader_readf (psf, "j", dword - 24) ;
 					break ;
 
 			case SUMLIST_HASH16 :
 					psf_binheader_readf (psf, "e8", &chunk_size) ;
 					psf_log_printf (psf, "summary list : %D\n", chunk_size) ;
-					dword = chunk_size ;
+					dword = (int) chunk_size ;
 					psf_binheader_readf (psf, "j", dword - 24) ;
 					break ;
 

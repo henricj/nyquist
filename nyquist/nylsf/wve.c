@@ -173,7 +173,7 @@ wve_write_header (SF_PRIVATE *psf, int calc_length)
 	psf_fseek (psf, 0, SEEK_SET) ;
 
 	/* Write header. */
-	datalen = psf->datalength ;
+	datalen = (unsigned int) psf->datalength ;
 	psf_binheader_writef (psf, "Emmmm", ALAW_MARKER, SOUN_MARKER, DFIL_MARKER, ESSN_MARKER) ;
 	psf_binheader_writef (psf, "E2422222", PSION_VERSION, datalen, 0, 0, 0, 0, 0) ;
 	psf_fwrite (psf->header, psf->headindex, 1, psf) ;

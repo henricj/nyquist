@@ -340,7 +340,7 @@ voc_read_header	(SF_PRIVATE *psf)
 								&bitwidth, &channels, &encoding, &fourbytes) ;
 
 		if (size * 2 == psf->filelength - 39)
-		{	int temp_size = psf->filelength - 31 ;
+		{	int temp_size = (int) (psf->filelength - 31) ;
 
 			psf_log_printf (psf, " Extended II : %d (SoX bug: should be %d)\n", size, temp_size) ;
 			size = temp_size ;
@@ -372,12 +372,12 @@ voc_read_header	(SF_PRIVATE *psf)
 			** sf_command (SFC_UPDATE_HEADER_NOW).
 			*/
 			psf_log_printf (psf, "Missing zero byte at end of file.\n") ;
-			size = psf->filelength - 30 ;
+			size = (int) (psf->filelength - 30) ;
 			psf->dataend = 0 ;
 			}
 		else if (size + 31 > psf->filelength)
 		{	psf_log_printf (psf, "Seems to be a truncated file.\n") ;
-			size = psf->filelength - 31 ;
+			size = (int) (psf->filelength - 31) ;
 			}
 		else if (size + 31 < psf->filelength)
 			psf_log_printf (psf, "Seems to be a multi-segment file (#3).\n") ;
@@ -484,27 +484,27 @@ voc_write_header (SF_PRIVATE *psf, int calc_length)
 		switch (subformat)
 		{	case SF_FORMAT_PCM_U8 :
 					psf->bytewidth = 1 ;
-					length = psf->sf.frames * psf->sf.channels * psf->bytewidth + 12 ;
+					length = (int) (psf->sf.frames * psf->sf.channels * psf->bytewidth + 12) ;
 					/* Marker, length, sample rate, bitwidth, stereo flag, encoding and fourt zero bytes. */
 					psf_binheader_writef (psf, "e1341124", VOC_EXTENDED_II, length, psf->sf.samplerate, 16, psf->sf.channels, 4, 0) ;
 					break ;
 
 			case SF_FORMAT_PCM_16 :
 					psf->bytewidth = 2 ;
-					length = psf->sf.frames * psf->sf.channels * psf->bytewidth + 12 ;
+					length = (int) (psf->sf.frames * psf->sf.channels * psf->bytewidth + 12) ;
 					/* Marker, length, sample rate, bitwidth, stereo flag, encoding and fourt zero bytes. */
 					psf_binheader_writef (psf, "e1341124", VOC_EXTENDED_II, length, psf->sf.samplerate, 16, psf->sf.channels, 4, 0) ;
 					break ;
 
 			case SF_FORMAT_ALAW :
 					psf->bytewidth = 1 ;
-					length = psf->sf.frames * psf->sf.channels * psf->bytewidth + 12 ;
+					length = (int) (psf->sf.frames * psf->sf.channels * psf->bytewidth + 12) ;
 					psf_binheader_writef (psf, "e1341124", VOC_EXTENDED_II, length, psf->sf.samplerate, 8, psf->sf.channels, 6, 0) ;
 					break ;
 
 			case SF_FORMAT_ULAW :
 					psf->bytewidth = 1 ;
-					length = psf->sf.frames * psf->sf.channels * psf->bytewidth + 12 ;
+					length = (int) (psf->sf.frames * psf->sf.channels * psf->bytewidth + 12) ;
 					psf_binheader_writef (psf, "e1341124", VOC_EXTENDED_II, length, psf->sf.samplerate, 8, psf->sf.channels, 7, 0) ;
 					break ;
 

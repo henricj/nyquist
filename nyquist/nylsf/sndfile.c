@@ -860,7 +860,7 @@ sf_command	(SNDFILE *sndfile, int command, void *data, int datasize)
 				return SFE_BAD_COMMAND_PARAM ;
 				} ;
 			snprintf (data, datasize, "%s", sf_version_string ()) ;
-			return strlen (data) ;
+			return (int) strlen (data) ;
 
 		case SFC_GET_SIMPLE_FORMAT_COUNT :
 			if (data == NULL || datasize != SIGNED_SIZEOF (int))
@@ -905,7 +905,7 @@ sf_command	(SNDFILE *sndfile, int command, void *data, int datasize)
 	{	if (data == NULL)
 			return (sf_errno = SFE_BAD_COMMAND_PARAM) ;
 		snprintf (data, datasize, "%s", sf_logbuffer) ;
-		return strlen (data) ;
+		return (int) strlen (data) ;
 		} ;
 
 	VALIDATE_SNDFILE_AND_ASSIGN_PSF (sndfile, psf, 1) ;

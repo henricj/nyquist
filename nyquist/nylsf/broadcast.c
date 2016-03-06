@@ -83,7 +83,7 @@ broadcast_var_set (SF_PRIVATE *psf, const SF_BROADCAST_INFO * info, size_t datas
 	/* Force coding_history_size to be even. */
 	len = strlen (psf->broadcast_16k->coding_history) ;
 	len += (len & 1) ? 1 : 2 ;
-	psf->broadcast_16k->coding_history_size = len ;
+	psf->broadcast_16k->coding_history_size = (unsigned int) len ;
 
 	/* Currently writing this version. */
 	psf->broadcast_16k->version = 1 ;

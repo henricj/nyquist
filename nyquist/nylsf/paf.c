@@ -396,10 +396,10 @@ paf24_init (SF_PRIVATE *psf)
 	if (psf->datalength % PAF24_BLOCK_SIZE)
 	{	if (psf->file.mode == SFM_READ)
 			psf_log_printf (psf, "*** Warning : file seems to be truncated.\n") ;
-		ppaf24->max_blocks = psf->datalength / ppaf24->blocksize + 1 ;
+		ppaf24->max_blocks = (int) (psf->datalength / ppaf24->blocksize + 1) ;
 		}
 	else
-		ppaf24->max_blocks = psf->datalength / ppaf24->blocksize ;
+		ppaf24->max_blocks = (int) (psf->datalength / ppaf24->blocksize) ;
 
 	ppaf24->read_block = 0 ;
 	if (psf->file.mode == SFM_RDWR)
@@ -428,7 +428,7 @@ paf24_seek (SF_PRIVATE *psf, int mode, sf_count_t offset)
 	if (mode == SFM_READ && ppaf24->write_count > 0)
 		paf24_write_block (psf, ppaf24) ;
 
-	newblock	= offset / ppaf24->samplesperblock ;
+	newblock	= (int) (offset / ppaf24->samplesperblock) ;
 	newsample	= offset % ppaf24->samplesperblock ;
 
 	switch (mode)
@@ -498,7 +498,7 @@ paf24_read_block (SF_PRIVATE *psf, PAF24_PRIVATE *ppaf24)
 		} ;
 
 	/* Read the block. */
-	if ((k = psf_fread (ppaf24->block, 1, ppaf24->blocksize, psf)) != ppaf24->blocksize)
+	if ((k = (int) psf_fread (ppaf24->block, 1, ppaf24->blocksize, psf)) != ppaf24->blocksize)
 		psf_log_printf (psf, "*** Warning : short read (%d != %d).\n", k, ppaf24->blocksize) ;
 
 
@@ -568,7 +568,7 @@ paf24_read_s (SF_PRIVATE *psf, short *ptr, sf_count_t len)
 	iptr = psf->u.ibuf ;
 	bufferlen = ARRAY_LEN (psf->u.ibuf) ;
 	while (len > 0)
-	{	readcount = (len >= bufferlen) ? bufferlen : len ;
+	{	readcount = (len >= bufferlen) ? bufferlen : (int) len ;
 		count = paf24_read (psf, ppaf24, iptr, readcount) ;
 		for (k = 0 ; k < readcount ; k++)
 			ptr [total + k] = iptr [k] >> 16 ;
@@ -580,14 +580,14 @@ paf24_read_s (SF_PRIVATE *psf, short *ptr, sf_count_t len)
 
 static sf_count_t
 paf24_read_i (SF_PRIVATE *psf, int *ptr, sf_count_t len)
-{	PAF24_PRIVATE *ppaf24 ;
-	int				total ;
+{	PAF24_PRIVATE	*ppaf24 ;
+    sf_count_t		total ;
 
 	if (psf->codec_data == NULL)
 		return 0 ;
 	ppaf24 = (PAF24_PRIVATE*) psf->codec_data ;
 
-	total = paf24_read (psf, ppaf24, ptr, len) ;
+	total = paf24_read (psf, ppaf24, ptr, (int) len) ;
 
 	return total ;
 } /* paf24_read_i */
@@ -609,7 +609,7 @@ paf24_read_f (SF_PRIVATE *psf, float *ptr, sf_count_t len)
 	iptr = psf->u.ibuf ;
 	bufferlen = ARRAY_LEN (psf->u.ibuf) ;
 	while (len > 0)
-	{	readcount = (len >= bufferlen) ? bufferlen : len ;
+	{	readcount = (len >= bufferlen) ? bufferlen : (int) len ;
 		count = paf24_read (psf, ppaf24, iptr, readcount) ;
 		for (k = 0 ; k < readcount ; k++)
 			ptr [total + k] = normfact * iptr [k] ;
@@ -636,7 +636,7 @@ paf24_read_d (SF_PRIVATE *psf, double *ptr, sf_count_t len)
 	iptr = psf->u.ibuf ;
 	bufferlen = ARRAY_LEN (psf->u.ibuf) ;
 	while (len > 0)
-	{	readcount = (len >= bufferlen) ? bufferlen : len ;
+	{	readcount = (len >= bufferlen) ? bufferlen : (int) len ;
 		count = paf24_read (psf, ppaf24, iptr, readcount) ;
 		for (k = 0 ; k < readcount ; k++)
 			ptr [total + k] = normfact * iptr [k] ;
@@ -685,7 +685,7 @@ paf24_write_block (SF_PRIVATE *psf, PAF24_PRIVATE *ppaf24)
 		} ;
 
 	/* Write block to disk. */
-	if ((k = psf_fwrite (ppaf24->block, 1, ppaf24->blocksize, psf)) != ppaf24->blocksize)
+	if ((k = (int) psf_fwrite (ppaf24->block, 1, ppaf24->blocksize, psf)) != ppaf24->blocksize)
 		psf_log_printf (psf, "*** Warning : short write (%d != %d).\n", k, ppaf24->blocksize) ;
 
 	if (ppaf24->sample_count < ppaf24->write_block * ppaf24->samplesperblock + ppaf24->write_count)
@@ -734,7 +734,7 @@ paf24_write_s (SF_PRIVATE *psf, const short *ptr, sf_count_t len)
 	iptr = psf->u.ibuf ;
 	bufferlen = ARRAY_LEN (psf->u.ibuf) ;
 	while (len > 0)
-	{	writecount = (len >= bufferlen) ? bufferlen : len ;
+	{	writecount = (len >= bufferlen) ? bufferlen : (int) len ;
 		for (k = 0 ; k < writecount ; k++)
 			iptr [k] = ptr [total + k] << 16 ;
 		count = paf24_write (psf, ppaf24, iptr, writecount) ;
@@ -787,7 +787,7 @@ paf24_write_f (SF_PRIVATE *psf, const float *ptr, sf_count_t len)
 	iptr = psf->u.ibuf ;
 	bufferlen = ARRAY_LEN (psf->u.ibuf) ;
 	while (len > 0)
-	{	writecount = (len >= bufferlen) ? bufferlen : len ;
+	{	writecount = (len >= bufferlen) ? bufferlen : (int) len ;
 		for (k = 0 ; k < writecount ; k++)
 			iptr [k] = lrintf (normfact * ptr [total + k]) ;
 		count = paf24_write (psf, ppaf24, iptr, writecount) ;
@@ -817,7 +817,7 @@ paf24_write_d (SF_PRIVATE *psf, const double *ptr, sf_count_t len)
 	iptr = psf->u.ibuf ;
 	bufferlen = ARRAY_LEN (psf->u.ibuf) ;
 	while (len > 0)
-	{	writecount = (len >= bufferlen) ? bufferlen : len ;
+	{	writecount = (len >= bufferlen) ? bufferlen : (int) len ;
 		for (k = 0 ; k < writecount ; k++)
 			iptr [k] = lrint (normfact * ptr [total+k]) ;
 		count = paf24_write (psf, ppaf24, iptr, writecount) ;

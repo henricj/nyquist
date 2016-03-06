@@ -117,7 +117,7 @@ htk_write_header (SF_PRIVATE *psf, int calc_length)
 	psf_fseek (psf, 0, SEEK_SET) ;
 
 	if (psf->filelength > 12)
-		sample_count = (psf->filelength - 12) / 2 ;
+		sample_count = (int) ((psf->filelength - 12) / 2) ;
 	else
 		sample_count = 0 ;
 
